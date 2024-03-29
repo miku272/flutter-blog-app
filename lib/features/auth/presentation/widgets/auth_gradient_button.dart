@@ -4,8 +4,9 @@ import '../../../../core/theme/app_pallete.dart';
 
 class AuthGradientButton extends StatelessWidget {
   final String labelText;
+  final VoidCallback? onTap;
 
-  const AuthGradientButton(this.labelText, {super.key});
+  const AuthGradientButton(this.labelText, {super.key, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class AuthGradientButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onTap,
         style: ElevatedButton.styleFrom(
           fixedSize: const Size(395, 55),
           backgroundColor: AppPallete.transparentColor,

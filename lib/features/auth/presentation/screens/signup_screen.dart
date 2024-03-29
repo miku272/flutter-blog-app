@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_pallete.dart';
 
 import '../widgets/auth_field.dart';
 import '../widgets/auth_gradient_button.dart';
+
+import '../bloc/auth_bloc.dart';
 
 import './signin_screen.dart';
 
@@ -19,7 +22,7 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final GlobalKey _signupKey = GlobalKey<FormState>();
+  final _signupKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -69,7 +72,20 @@ class _SignupScreenState extends State<SignupScreen> {
                 controller: _passwordController,
               ),
               const SizedBox(height: 30.0),
-              const AuthGradientButton('Sign Up'),
+              AuthGradientButton(
+                'Sign Up',
+                onTap: () {
+                  if (_signupKey.currentState!.validate()) {
+                    context.read<AuthBloc>().add(
+                          AuthSignup(
+                            name: _nameController.text.trim(),
+                            email: _emailController.text.trim(),
+                            password: _passwordController.text,
+                          ),
+                        );
+                  }
+                },
+              ),
               const SizedBox(height: 30.0),
               GestureDetector(
                 onTap: () {
