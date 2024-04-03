@@ -7,6 +7,7 @@ import './features/auth/data/datasources/auth_remote_data_source.dart';
 import './features/auth/data/repositories/auth_repository_impl.dart';
 import './features/auth/domain/repository/auth_repository.dart';
 import './features/auth/domain/usecases/user_signup.dart';
+import './features/auth/domain/usecases/user_signin.dart';
 
 import './features/auth/presentation/bloc/auth_bloc.dart';
 
@@ -43,9 +44,16 @@ void _initAuth() {
     ),
   );
 
+  serviceocator.registerFactory<UserSignin>(
+    () => UserSignin(
+      authRepository: serviceocator<AuthRepository>(),
+    ),
+  );
+
   serviceocator.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
       userSignup: serviceocator<UserSignup>(),
+      userSignin: serviceocator<UserSignin>(),
     ),
   );
 }

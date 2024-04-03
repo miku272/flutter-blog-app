@@ -1,3 +1,4 @@
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failures.dart';
@@ -21,27 +22,39 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    try {
-      final User user = await authRemoteDataSource.signupWithEmailAndPassword(
+    return _getUser(
+      () async => await authRemoteDataSource.signupWithEmailAndPassword(
         name: name,
         email: email,
         password: password,
-      );
-
-      return right(user);
-    } on ServerException catch (error) {
-      return left(Failure(message: error.message));
-    } catch (error) {
-      return left(Failure(message: error.toString()));
-    }
+      ),
+    );
   }
 
   @override
   Future<Either<Failure, User>> signInWithEmailAndPassword({
     required String email,
     required String password,
-  }) {
-    // TODO: implement signInWithEmailAndPassword
-    throw UnimplementedError();
+  }) async {
+    return _getUser(
+      () async => await authRemoteDataSource.signinWithEmailAndPassword(
+        email: email,
+        password: password,
+      ),
+    );
+  }
+
+  Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
+    try {
+      final User user = await fn();
+
+      return right(user);
+    } on sb.AuthException catch (error) {
+      return left(Failure(message: error.message));
+    } on ServerException catch (error) {
+      return left(Failure(message: error.message));
+    } catch (error) {
+      return left(Failure(message: error.toString()));
+    }
   }
 }
