@@ -8,10 +8,11 @@ import './features/auth/data/repositories/auth_repository_impl.dart';
 import './features/auth/domain/repository/auth_repository.dart';
 import './features/auth/domain/usecases/user_signup.dart';
 import './features/auth/domain/usecases/user_signin.dart';
+import './features/auth/domain/usecases/current_user.dart';
 
 import './features/auth/presentation/bloc/auth_bloc.dart';
 
-final serviceocator = GetIt.instance;
+final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   final supabase = await Supabase.initialize(
@@ -20,40 +21,47 @@ Future<void> initDependencies() async {
     // debug: true,
   );
 
-  serviceocator.registerLazySingleton<SupabaseClient>(() => supabase.client);
+  serviceLocator.registerLazySingleton<SupabaseClient>(() => supabase.client);
 
   _initAuth();
 }
 
 void _initAuth() {
-  serviceocator.registerFactory<AuthRemoteDataSource>(
+  serviceLocator.registerFactory<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(
-      supabaseClient: serviceocator<SupabaseClient>(),
+      supabaseClient: serviceLocator<SupabaseClient>(),
     ),
   );
 
-  serviceocator.registerFactory<AuthRepository>(
+  serviceLocator.registerFactory<AuthRepository>(
     () => AuthRepositoryImpl(
-      authRemoteDataSource: serviceocator<AuthRemoteDataSource>(),
+      authRemoteDataSource: serviceLocator<AuthRemoteDataSource>(),
     ),
   );
 
-  serviceocator.registerFactory<UserSignup>(
+  serviceLocator.registerFactory<UserSignup>(
     () => UserSignup(
-      authRepository: serviceocator<AuthRepository>(),
+      authRepository: serviceLocator<AuthRepository>(),
     ),
   );
 
-  serviceocator.registerFactory<UserSignin>(
+  serviceLocator.registerFactory<UserSignin>(
     () => UserSignin(
-      authRepository: serviceocator<AuthRepository>(),
+      authRepository: serviceLocator<AuthRepository>(),
     ),
   );
 
-  serviceocator.registerLazySingleton<AuthBloc>(
+  serviceLocator.registerFactory<CurrentUser>(
+    () => CurrentUser(
+      authRepository: serviceLocator<AuthRepository>(),
+    ),
+  );
+
+  serviceLocator.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
-      userSignup: serviceocator<UserSignup>(),
-      userSignin: serviceocator<UserSignin>(),
+      userSignup: serviceLocator<UserSignup>(),
+      userSignin: serviceLocator<UserSignin>(),
+      currentUser: serviceLocator<CurrentUser>(),
     ),
   );
 }
