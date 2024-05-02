@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get_it/get_it.dart';
 
 import './core/secrets/app_secrets.dart';
+import './core/common/cubits/app_user/app_user_cubit.dart';
 
 import './features/auth/data/datasources/auth_remote_data_source.dart';
 import './features/auth/data/repositories/auth_repository_impl.dart';
@@ -15,6 +16,8 @@ import './features/auth/presentation/bloc/auth_bloc.dart';
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
+  _initAuth();
+
   final supabase = await Supabase.initialize(
     url: AppSecrets.supabaseUrl,
     anonKey: AppSecrets.supabaseAnonKey,
@@ -23,7 +26,7 @@ Future<void> initDependencies() async {
 
   serviceLocator.registerLazySingleton<SupabaseClient>(() => supabase.client);
 
-  _initAuth();
+  serviceLocator.registerLazySingleton(() => AppUserCubit());
 }
 
 void _initAuth() {
@@ -62,6 +65,7 @@ void _initAuth() {
       userSignup: serviceLocator<UserSignup>(),
       userSignin: serviceLocator<UserSignin>(),
       currentUser: serviceLocator<CurrentUser>(),
+      appUserCubit: serviceLocator<AppUserCubit>(),
     ),
   );
 }

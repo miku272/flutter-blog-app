@@ -5,7 +5,7 @@ import '../../../../core/usecase/usecase.dart';
 
 import '../repository/auth_repository.dart';
 
-import '../entities/user.dart';
+import '../../../../core/common/entities/user.dart';
 
 class UserSignin implements Usecase<User, UserSigninParams> {
   final AuthRepository authRepository;

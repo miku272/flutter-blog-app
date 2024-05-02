@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/exceptions.dart';
 
-import '../../domain/entities/user.dart';
+import '../../../../core/common/entities/user.dart';
 import '../../domain/repository/auth_repository.dart';
 
 import '../datasources/auth_remote_data_source.dart';

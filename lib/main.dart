@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import './init_dependencies.dart';
 
 import './core/theme/theme.dart';
+import './core/common/cubits/app_user/app_user_cubit.dart';
 
 import './features/auth/presentation/bloc/auth_bloc.dart';
 
@@ -17,6 +18,9 @@ Future<void> main() async {
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (_) => serviceLocator<AppUserCubit>(),
+        ),
         BlocProvider(
           create: (_) => serviceLocator<AuthBloc>(),
         ),
@@ -38,7 +42,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    context.read<AuthBloc>().add(AuthIsUserLoggedIn());
+    context.read<AuthBloc>().add(AuthIsUserSignedin());
   }
 
   @override
@@ -47,7 +51,20 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Blog App',
       theme: AppTheme.darkThemeMode,
-      home: const SigninScreen(),
+      home: BlocSelector<AppUserCubit, AppUserState, bool>(selector: (state) {
+        return state is AppUserSignedin;
+      }, builder: (context, isLoggedIn) {
+        if (isLoggedIn) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Logged In',
+              ),
+            ),
+          );
+        }
+        return const SigninScreen();
+      }),
     );
   }
 }

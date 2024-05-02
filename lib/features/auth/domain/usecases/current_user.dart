@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 
+import '../../../../core/common/entities/user.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../../../../core/error/failures.dart';
 
-import '../entities/user.dart';
 import '../repository/auth_repository.dart';
 
 class CurrentUser implements Usecase<User, NoParams> {
