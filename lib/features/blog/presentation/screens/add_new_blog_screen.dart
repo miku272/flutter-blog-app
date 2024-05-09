@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 
 import '../../../../core/theme/app_pallete.dart';
+import '../../../../core/utils/pick_image.dart';
 
 import '../widgets/blog_editor.dart';
 
@@ -21,6 +24,18 @@ class _AddNewBlogScreenState extends State<AddNewBlogScreen> {
   final TextEditingController _blogContentController = TextEditingController();
 
   Set<String> selectedTopics = {};
+
+  File? image;
+
+  void selectImage() async {
+    final pickedImage = await pickImage();
+
+    if (pickedImage != null) {
+      setState(() {
+        image = pickedImage;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -48,29 +63,42 @@ class _AddNewBlogScreenState extends State<AddNewBlogScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: const Radius.circular(10),
-                  color: AppPallete.borderColor,
-                  strokeCap: StrokeCap.round,
-                  dashPattern: const [15, 4],
-                  child: const SizedBox(
-                    height: 200,
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.folder_open, size: 40),
-                        SizedBox(height: 15),
-                        Text(
-                          'Select your image',
-                          style: TextStyle(
-                            fontSize: 18,
+                GestureDetector(
+                  onTap: selectImage,
+                  child: image == null
+                      ? DottedBorder(
+                          borderType: BorderType.RRect,
+                          radius: const Radius.circular(10),
+                          color: AppPallete.borderColor,
+                          strokeCap: StrokeCap.round,
+                          dashPattern: const [15, 4],
+                          child: const SizedBox(
+                            height: 200,
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(Icons.folder_open, size: 40),
+                                SizedBox(height: 15),
+                                Text(
+                                  'Select your image',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            image!,
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
                 ),
                 const SizedBox(height: 20),
                 SingleChildScrollView(
