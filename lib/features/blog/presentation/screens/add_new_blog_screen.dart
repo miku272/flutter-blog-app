@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/common/cubits/app_user/app_user_cubit.dart';
 import '../../../../core/common/widgets/blog_uploading_loader.dart';
@@ -11,6 +12,7 @@ import '../../../../core/utils/pick_image.dart';
 import '../../../../core/utils/show_snackbar.dart';
 
 import '../widgets/blog_editor.dart';
+import '../widgets/choose_image_source.dart';
 
 import '../bloc/blog_bloc.dart';
 
@@ -38,12 +40,52 @@ class _AddNewBlogScreenState extends State<AddNewBlogScreen> {
   File? image;
 
   void selectImage() async {
-    final pickedImage = await pickImage();
+    ImageSource? imageSource;
 
-    if (pickedImage != null) {
-      setState(() {
-        image = pickedImage;
-      });
+    await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return SizedBox(
+            height: 300,
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    imageSource = ImageSource.camera;
+                  },
+                  child: const ChooseImageSource(
+                    asset: 'assets/icons/animated-camera.json',
+                    label: 'Take a photo',
+                  ),
+                ),
+                const SizedBox(width: 30),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    imageSource = ImageSource.gallery;
+                  },
+                  child: const ChooseImageSource(
+                    asset: 'assets/icons/animated-gallery.json',
+                    label: 'Upload from gallery',
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+
+    if (imageSource != null) {
+      final pickedImage = await pickImage(imageSource!);
+
+      if (pickedImage != null) {
+        setState(() {
+          image = pickedImage;
+        });
+      }
     }
   }
 
@@ -138,14 +180,35 @@ class _AddNewBlogScreenState extends State<AddNewBlogScreen> {
                                   ),
                                 ),
                               )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.file(
-                                  image!,
-                                  height: 200,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
+                            : Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      image!,
+                                      height: 200,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 10,
+                                    right: 10,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          image = null;
+                                        });
+                                      },
+                                      child: const Opacity(
+                                        opacity: 0.7,
+                                        child: Chip(
+                                          label: Icon(Icons.delete_rounded),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                       ),
                       const SizedBox(height: 20),
