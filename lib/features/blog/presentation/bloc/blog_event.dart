@@ -1,19 +1,20 @@
-class Blog {
-  final String id;
+part of 'blog_bloc.dart';
+
+@immutable
+sealed class BlogEvent {}
+
+final class BlogUpload extends BlogEvent {
   final String userId;
   final String title;
   final String content;
-  final String imageUrl;
+  final File image;
   final List<String> topics;
-  final DateTime updatedAt;
 
-  const Blog({
-    required this.id,
+  BlogUpload({
     required this.userId,
     required this.title,
     required this.content,
-    required this.imageUrl,
+    required this.image,
     required this.topics,
-    required this.updatedAt,
   });
 }

@@ -8,7 +8,7 @@ class Loader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: Lottie.asset(
-      'assets/icons/loading-heart.json',
+      'assets/icons/blog_uploading_loader.json',
       repeat: true,
     ));
   }

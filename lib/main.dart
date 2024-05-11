@@ -10,6 +10,7 @@ import './features/auth/presentation/bloc/auth_bloc.dart';
 
 import './features/auth/presentation/screens/signin_screen.dart';
 import './features/blog/presentation/screens/blog_screen.dart';
+import './features/blog/presentation/bloc/blog_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,9 @@ Future<void> main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<AuthBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<BlogBloc>(),
         ),
       ],
       child: const MyApp(),
