@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class Loader extends StatelessWidget {
-  const Loader({super.key});
+class BlogFetchingLoader extends StatelessWidget {
+  const BlogFetchingLoader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +10,7 @@ class Loader extends StatelessWidget {
         child: SizedBox(
       height: 100,
       child: Lottie.asset(
-        'assets/icons/loading-heart.json',
+        'assets/icons/animated-newspaper.json',
         repeat: true,
         fit: BoxFit.cover,
       ),

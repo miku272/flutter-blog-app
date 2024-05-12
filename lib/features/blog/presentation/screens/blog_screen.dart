@@ -1,14 +1,32 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/common/widgets/blog_fetching_loader.dart';
+import '../../../../core/utils/show_snackbar.dart';
+
+import '../bloc/blog_bloc.dart';
 
 import './add_new_blog_screen.dart';
 
-class BlogScreen extends StatelessWidget {
+class BlogScreen extends StatefulWidget {
   static route() => MaterialPageRoute(
         builder: (context) => const BlogScreen(),
       );
 
   const BlogScreen({super.key});
+
+  @override
+  State<BlogScreen> createState() => _BlogScreenState();
+}
+
+class _BlogScreenState extends State<BlogScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<BlogBloc>().add(GetAllBlog());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +42,37 @@ class BlogScreen extends StatelessWidget {
             },
           ),
         ],
+      ),
+      body: BlocConsumer<BlogBloc, BlogState>(
+        listener: (context, state) {
+          if (state is BlogFailure) {
+            showSnackbar(context, state.error);
+          }
+        },
+        builder: (context, state) {
+          if (state is BlogLoading) {
+            return const BlogFetchingLoader();
+          }
+
+          if (state is BlogFailure) {
+            return const Center(
+              child: Text('Failed to fetch blogs. Please try again later.'),
+            );
+          }
+
+          if (state is BlogDisplaySuccess) {
+            return ListView.builder(
+              itemCount: state.blogs.length,
+              itemBuilder: (context, index) {
+                return Text(
+                  'Blog Title: ${state.blogs[index].title}',
+                );
+              },
+            );
+          }
+
+          return const SizedBox();
+        },
       ),
     );
   }

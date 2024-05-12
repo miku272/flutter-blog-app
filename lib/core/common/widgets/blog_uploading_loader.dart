@@ -7,9 +7,13 @@ class BlogUploadingLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Lottie.asset(
-      'assets/icons/blog_uploading_loader.json',
-      repeat: true,
+        child: SizedBox(
+      height: 100,
+      child: Lottie.asset(
+        'assets/icons/blog_uploading_loader.json',
+        repeat: true,
+        fit: BoxFit.cover,
+      ),
     ));
   }
 }

@@ -9,6 +9,7 @@ import '../models/blog_model.dart';
 abstract interface class BlogRemoteDataSource {
   Future<String> uploadBlogImage(File image, BlogModel blog);
   Future<BlogModel> uploadBlog(BlogModel blog);
+  Future<List<BlogModel>> getAllBlogs();
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
@@ -34,6 +35,26 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
           await supabaseClient.from('blogs').insert(blog.toJson()).select();
 
       return BlogModel.fromJson(blogData.first);
+    } catch (error) {
+      throw ServerException(message: error.toString());
+    }
+  }
+
+  @override
+  Future<List<BlogModel>> getAllBlogs() async {
+    try {
+      // Performing join operation to get the name of the author
+      final blogs = await supabaseClient.from('blogs').select(
+            '*, profiles (name)',
+          );
+
+      return blogs
+          .map(
+            (blog) => BlogModel.fromJson(blog).copyWith(
+              userName: blog['profiles']['name'],
+            ),
+          )
+          .toList();
     } catch (error) {
       throw ServerException(message: error.toString());
     }
