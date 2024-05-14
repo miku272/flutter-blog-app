@@ -3,11 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/common/widgets/blog_fetching_loader.dart';
+import '../../../../core/theme/app_pallete.dart';
 import '../../../../core/utils/show_snackbar.dart';
 
 import '../bloc/blog_bloc.dart';
 
+import '../widgets/blog_card.dart';
+
 import './add_new_blog_screen.dart';
+import './blog_viewer_screen.dart';
 
 class BlogScreen extends StatefulWidget {
   static route() => MaterialPageRoute(
@@ -64,8 +68,20 @@ class _BlogScreenState extends State<BlogScreen> {
             return ListView.builder(
               itemCount: state.blogs.length,
               itemBuilder: (context, index) {
-                return Text(
-                  'Blog Title: ${state.blogs[index].title}',
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      BlogViewerScreen.route(state.blogs[index]),
+                    );
+                  },
+                  child: BlogCard(
+                    blog: state.blogs[index],
+                    color: index % 3 == 0
+                        ? AppPallete.gradient1
+                        : index % 3 == 1
+                            ? AppPallete.gradient2
+                            : AppPallete.gradient3,
+                  ),
                 );
               },
             );
