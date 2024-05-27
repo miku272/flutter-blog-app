@@ -1,7 +1,7 @@
-import 'package:blog_app/core/utils/show_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/utils/show_snackbar.dart';
 import '../../../../core/theme/app_pallete.dart';
 import '../../../../core/common/widgets/loader.dart';
 
@@ -10,19 +10,22 @@ import '../bloc/auth_bloc.dart';
 import '../widgets/auth_field.dart';
 import '../widgets/auth_gradient_button.dart';
 
+import '../../../blog/presentation/screens/blog_screen.dart';
+
 import './signup_screen.dart';
 
 class SigninScreen extends StatefulWidget {
   static route() => MaterialPageRoute(
         builder: (context) => const SigninScreen(),
       );
+
   const SigninScreen({super.key});
 
   @override
-  State<SigninScreen> createState() => _SignupScreenState();
+  State<SigninScreen> createState() => _SigninScreenState();
 }
 
-class _SignupScreenState extends State<SigninScreen> {
+class _SigninScreenState extends State<SigninScreen> {
   final _signinKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -45,6 +48,11 @@ class _SignupScreenState extends State<SigninScreen> {
           listener: (context, state) {
             if (state is AuthFailure) {
               showSnackbar(context, state.message);
+            } else if (state is AuthSuccess) {
+              Navigator.of(context).pushAndRemoveUntil(
+                BlogScreen.route(),
+                (route) => false,
+              );
             }
           },
           builder: (context, state) {

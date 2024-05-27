@@ -35,6 +35,8 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
           await supabaseClient.from('blogs').insert(blog.toJson()).select();
 
       return BlogModel.fromJson(blogData.first);
+    } on PostgrestException catch (error) {
+      throw ServerException(message: error.message);
     } catch (error) {
       throw ServerException(message: error.toString());
     }
@@ -55,6 +57,8 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
             ),
           )
           .toList();
+    } on PostgrestException catch (error) {
+      throw ServerException(message: error.message);
     } catch (error) {
       throw ServerException(message: error.toString());
     }

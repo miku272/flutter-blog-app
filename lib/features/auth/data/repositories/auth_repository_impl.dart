@@ -1,24 +1,44 @@
-import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/exceptions.dart';
-
 import '../../../../core/common/entities/user.dart';
+import '../../../../core/network/connection_checker.dart';
+
+import '../models/user_model.dart';
+
 import '../../domain/repository/auth_repository.dart';
 
 import '../datasources/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemoteDataSource;
+  final ConnectionChecker connectionChecker;
 
   const AuthRepositoryImpl({
     required this.authRemoteDataSource,
+    required this.connectionChecker,
   });
 
   @override
   Future<Either<Failure, User>> getCurrentUserData() async {
     try {
+      if (!(await connectionChecker.hasConnection)) {
+        final session = authRemoteDataSource.currentuserSession;
+
+        if (session == null) {
+          return left(Failure(message: 'No internet connection'));
+        }
+
+        return right(
+          UserModel(
+            id: session.user.id,
+            email: session.user.email ?? '',
+            name: '',
+          ),
+        );
+      }
+
       final user = await authRemoteDataSource.getCurrentUserData();
 
       if (user == null) {
@@ -26,8 +46,6 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       return right(user);
-    } on sb.AuthException catch (error) {
-      return left(Failure(message: error.message));
     } on ServerException catch (error) {
       return left(Failure(message: error.message));
     } catch (error) {
@@ -65,11 +83,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
     try {
+      if (!(await connectionChecker.hasConnection)) {
+        left(Failure(message: 'No internet connection'));
+      }
+
       final User user = await fn();
 
       return right(user);
-    } on sb.AuthException catch (error) {
-      return left(Failure(message: error.message));
     } on ServerException catch (error) {
       return left(Failure(message: error.message));
     } catch (error) {

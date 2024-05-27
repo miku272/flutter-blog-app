@@ -9,6 +9,8 @@ import '../../../../core/utils/show_snackbar.dart';
 import '../widgets/auth_field.dart';
 import '../widgets/auth_gradient_button.dart';
 
+import '../../../blog/presentation/screens/blog_screen.dart';
+
 import '../bloc/auth_bloc.dart';
 
 import './signin_screen.dart';
@@ -50,6 +52,11 @@ class _SignupScreenState extends State<SignupScreen> {
           listener: (context, state) {
             if (state is AuthFailure) {
               showSnackbar(context, state.message);
+            } else if (state is AuthSuccess) {
+              Navigator.of(context).pushAndRemoveUntil(
+                BlogScreen.route(),
+                (route) => false,
+              );
             }
           },
           builder: (context, state) {

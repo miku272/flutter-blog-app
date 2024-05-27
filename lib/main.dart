@@ -56,14 +56,17 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Blog App',
       theme: AppTheme.darkThemeMode,
-      home: BlocSelector<AppUserCubit, AppUserState, bool>(selector: (state) {
-        return state is AppUserSignedin;
-      }, builder: (context, isLoggedIn) {
-        if (isLoggedIn) {
-          return const BlogScreen();
-        }
-        return const SigninScreen();
-      }),
+      home: BlocSelector<AppUserCubit, AppUserState, bool>(
+        selector: (state) {
+          return state is AppUserSignedin;
+        },
+        builder: (context, isLoggedIn) {
+          if (isLoggedIn) {
+            return const BlogScreen();
+          }
+          return const SigninScreen();
+        },
+      ),
     );
   }
 }

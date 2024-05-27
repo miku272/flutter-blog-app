@@ -238,7 +238,7 @@ class _AddNewBlogScreenState extends State<AddNewBlogScreen> {
                                     child: Chip(
                                       label: Text(e),
                                       color: selectedTopics.contains(e)
-                                          ? const MaterialStatePropertyAll(
+                                          ? const WidgetStatePropertyAll(
                                               AppPallete.gradient1,
                                             )
                                           : null,
