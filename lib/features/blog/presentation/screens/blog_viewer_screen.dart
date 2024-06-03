@@ -82,7 +82,24 @@ class BlogViewerScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.network(blog!.imageUrl),
+                        child: Image.network(
+                          blog!.imageUrl,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Icon(
+                                Icons.error,
+                                size: 50,
+                                color: AppPallete.greyColor,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                       const SizedBox(height: 20),
                       Text(

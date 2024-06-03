@@ -37,8 +37,11 @@ class BlogCard extends StatelessWidget {
                   child: Row(
                     children: blog.topics
                         .map(
-                          (e) => Chip(
-                            label: Text(e),
+                          (e) => Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            child: Chip(
+                              label: Text(e),
+                            ),
                           ),
                         )
                         .toList(),
